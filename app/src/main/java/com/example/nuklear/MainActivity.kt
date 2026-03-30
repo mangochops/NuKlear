@@ -17,7 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.example.nuklear.ui.theme.NuKlearTheme
@@ -28,15 +27,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NuKlearTheme {
-                NuKlearApp()
+                NuClearAppContent()
             }
         }
     }
 }
 
+enum class AppDestinations(
+    val label: String,
+    val icon: Int,
+) {
+    HOME("Home", R.drawable.ic_home),
+    FAVORITES("Favorites", R.drawable.ic_favorite),
+    PROFILE("Profile", R.drawable.ic_account_box),
+}
+
 @PreviewScreenSizes
 @Composable
-fun NuKlearApp() {
+fun NuClearAppContent() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
     NavigationSuiteScaffold(
@@ -57,35 +65,22 @@ fun NuKlearApp() {
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
+            val modifier = Modifier.padding(innerPadding)
+            when (currentDestination) {
+                AppDestinations.HOME -> HomeScreen(modifier)
+                AppDestinations.FAVORITES -> FavoritesScreen(modifier)
+                AppDestinations.PROFILE -> ProfileScreen(modifier)
+            }
         }
     }
 }
 
-enum class AppDestinations(
-    val label: String,
-    val icon: Int,
-) {
-    HOME("Home", R.drawable.ic_home),
-    FAVORITES("Favorites", R.drawable.ic_favorite),
-    PROFILE("Profile", R.drawable.ic_account_box),
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+private fun NuClearAppPreview() {
     NuKlearTheme {
-        Greeting("Android")
+        NuClearAppContent()
     }
 }
