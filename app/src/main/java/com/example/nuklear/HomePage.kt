@@ -66,7 +66,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     ) {
         item {
             Text(
-                text = "NuKlear Overview",
+                text = "Overview",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -138,6 +138,7 @@ fun NewsSection() {
 fun NewsCard(news: News) {
     Card(
         modifier = Modifier.width(280.dp),
+
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)

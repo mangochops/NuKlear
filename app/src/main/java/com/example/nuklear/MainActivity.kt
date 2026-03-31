@@ -1,9 +1,11 @@
 package com.example.nuklear
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -50,7 +52,7 @@ fun NuClearAppContent() {
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             AppDestinations.entries.forEach {
-                item(
+                item (
                     icon = {
                         Icon(
                             painterResource(it.icon),
@@ -59,13 +61,15 @@ fun NuClearAppContent() {
                     },
                     label = { Text(it.label) },
                     selected = it == currentDestination,
-                    onClick = { currentDestination = it }
+                    onClick = { currentDestination = it },
+
                 )
             }
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             val modifier = Modifier.padding(innerPadding)
+
             when (currentDestination) {
                 AppDestinations.HOME -> HomeScreen(modifier)
                 AppDestinations.FAVORITES -> FavoritesScreen(modifier)
