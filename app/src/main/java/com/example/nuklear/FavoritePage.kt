@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -20,14 +19,16 @@ import androidx.compose.ui.unit.dp
 import com.example.nuklear.ui.theme.NuKlearTheme
 
 @Composable
-fun FavoritesScreen(modifier: Modifier = Modifier) {
+fun FavoritesScreen(
+    viewModel: StationViewModel,
+    modifier: Modifier = Modifier) {
     // For now, let's pretend these IDs were saved as favorites
     // In a real app, this would come from a Room database or your Rails backend
-    val favoriteIds = listOf(1, 3)
-    val favoriteStations = sampleStations.filter { it.id in favoriteIds }
+
+    val favoriteStations = viewModel.favoriteStations
 
     if (favoriteStations.isEmpty()) {
-        // Show an empty state if nothing is favorited
+        
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -46,7 +47,7 @@ fun FavoritesScreen(modifier: Modifier = Modifier) {
             }
         }
     } else {
-        // Show the list of favorited stations
+
         LazyColumn(
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp)
@@ -62,7 +63,10 @@ fun FavoritesScreen(modifier: Modifier = Modifier) {
 
             items(favoriteStations, key = { it.id }) { station ->
                 // Reusing the StationCard from your HomeScreen
-                StationCard(station = station)
+                StationCard(
+                    station = station,
+                    onFavoriteClick = { viewModel.toggleFavorite(station.id)}
+                )
             }
         }
     }
@@ -73,6 +77,6 @@ fun FavoritesScreen(modifier: Modifier = Modifier) {
 fun FavoritesScreenEmptyPreview() {
     NuKlearTheme {
         // We pass a dummy modifier for the preview
-        FavoritesScreen()
+        FavoritesScreen(viewModel = StationViewModel())
     }
 }

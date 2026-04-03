@@ -5,7 +5,8 @@ data class Station(
     val name: String,
     val location: String,
     val status: String,
-    val capacity: String
+    val capacity: String,
+    var isFavorite: Boolean = false
 )
 
 val sampleStations = listOf(

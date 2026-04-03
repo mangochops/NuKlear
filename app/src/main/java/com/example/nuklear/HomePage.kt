@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nuklear.ui.theme.NuKlearTheme
@@ -50,11 +51,13 @@ val sampleNews = listOf(
 )
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: StationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     var searchQuery by remember { mutableStateOf("") }
     
     val filteredStations = remember(searchQuery) {
-        sampleStations.filter {
+        viewModel.stations.filter {
             it.name.contains(searchQuery, ignoreCase = true) ||
                     it.location.contains(searchQuery, ignoreCase = true)
         }
@@ -101,7 +104,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .padding(bottom = 16.dp),
                 placeholder = { Text("Search by name or location...") },
                 leadingIcon = { 
-                    Icon(painterResource(id = R.drawable.ic_home), contentDescription = null)
+                    Icon(painterResource(id = R.drawable.baseline_search_24), contentDescription = null)
                 },
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true
@@ -109,7 +112,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
         
         items(filteredStations, key = { it.id }) { station ->
-            StationCard(station = station)
+            StationCard(
+                onFavoriteClick = { viewModel.toggleFavorite(station.id) },
+                station = station,)
         }
     }
 }
@@ -137,14 +142,20 @@ fun NewsSection() {
 @Composable
 fun NewsCard(news: News) {
     Card(
-        modifier = Modifier.width(280.dp),
+        modifier = Modifier
+            .width(280.dp)
+            .height(140.dp),
 
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = news.source,
                 style = MaterialTheme.typography.labelSmall,
@@ -156,7 +167,8 @@ fun NewsCard(news: News) {
                 text = news.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                maxLines = 2
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -216,7 +228,7 @@ fun InfoCard(
 }
 
 @Composable
-fun StationCard(station: Station, modifier: Modifier = Modifier) {
+fun StationCard(station: Station, modifier: Modifier = Modifier, onFavoriteClick: () -> Unit) {
     var isFavorite by remember { mutableStateOf(false) }
     
     Card(
@@ -268,7 +280,9 @@ fun StationCard(station: Station, modifier: Modifier = Modifier) {
             
             IconButton(onClick = { isFavorite = !isFavorite }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_favorite),
+                    painter = painterResource(
+                        id = if (isFavorite) R.drawable.ic_favorite else R.drawable.favorite
+                    ),
                     contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                     tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
