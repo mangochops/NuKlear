@@ -75,4 +75,5 @@ dependencies {
     implementation(libs.supabase.auth)
     implementation(libs.supabase.storage)
     implementation(libs.ktor.client.android)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
 }

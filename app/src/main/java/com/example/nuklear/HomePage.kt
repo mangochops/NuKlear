@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.nuklear.ui.theme.NuKlearTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 data class News(
     val id: Int,
@@ -53,10 +54,11 @@ val sampleNews = listOf(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: StationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+    viewModel: StationViewModel = viewModel()
+){
     var searchQuery by remember { mutableStateOf("") }
     
-    val filteredStations = remember(searchQuery) {
+    val filteredStations = remember(searchQuery, viewModel.stations) {
         viewModel.stations.filter {
             it.name.contains(searchQuery, ignoreCase = true) ||
                     it.location.contains(searchQuery, ignoreCase = true)
@@ -229,8 +231,7 @@ fun InfoCard(
 
 @Composable
 fun StationCard(station: Station, modifier: Modifier = Modifier, onFavoriteClick: () -> Unit) {
-    var isFavorite by remember { mutableStateOf(false) }
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -278,13 +279,12 @@ fun StationCard(station: Station, modifier: Modifier = Modifier, onFavoriteClick
                 }
             }
             
-            IconButton(onClick = { isFavorite = !isFavorite }) {
+            IconButton(onClick = onFavoriteClick) {
                 Icon(
                     painter = painterResource(
-                        id = if (isFavorite) R.drawable.ic_favorite else R.drawable.favorite
-                    ),
-                    contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                    tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        id = if (station.isFavorite) R.drawable.ic_favorite else R.drawable.favorite                    ),
+                    contentDescription = if (station.isFavorite) "Remove from favorites" else "Add to favorites",
+                    tint = if (station.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
             }
         }

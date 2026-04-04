@@ -86,8 +86,10 @@ enum class AppDestinations(val label: String, val icon: Int) {
 }
 
 @Composable
-fun NuClearAppContent(authViewModel: AuthViewModel) {
+fun NuClearAppContent(authViewModel: AuthViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+
+    val stationViewModel: StationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     val myItemColors = NavigationSuiteDefaults.itemColors(
         navigationBarItemColors = NavigationBarItemDefaults.colors(
@@ -116,8 +118,10 @@ fun NuClearAppContent(authViewModel: AuthViewModel) {
             val contentModifier = Modifier.padding(paddingValues)
 
             when (currentDestination) {
-                AppDestinations.HOME -> HomeScreen(contentModifier)
-                AppDestinations.FAVORITES -> FavoritesScreen(contentModifier)
+                AppDestinations.HOME -> HomeScreen(viewModel = stationViewModel,
+                    modifier = contentModifier)
+                AppDestinations.FAVORITES -> FavoritesScreen(viewModel = stationViewModel,
+                    modifier = contentModifier)
                 AppDestinations.PROFILE -> ProfileScreen(
                     modifier = contentModifier,
                     onLogout = { authViewModel.logout() } // Pass logout to profile
@@ -131,6 +135,6 @@ fun NuClearAppContent(authViewModel: AuthViewModel) {
 @Composable
 private fun NuClearAppPreview() {
     NuKlearTheme {
-        NuClearAppContent(authViewModel = AuthViewModel())
+        NuClearAppContent()
     }
 }
